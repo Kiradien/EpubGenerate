@@ -6,3 +6,6 @@
 /EpubGenerate/obj
 /.vs
 /packages
+/DocXFolderToEpubGUI/obj
+/DocXFolderToEpubGUI/bin/Debug
+/DocXFolderToEpubGUI/Properties

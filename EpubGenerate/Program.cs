@@ -15,7 +15,7 @@ using System.Text.RegularExpressions;
 
 namespace DocXFolderToEpub
 {
-    class Program
+    public class Program
     {
         //Need to run "msbuild /t:ILMerge" in VS CMD Prompt for integrated executable.
         static void Main(string[] args)
@@ -42,7 +42,8 @@ namespace DocXFolderToEpub
 
                 if (settings != null)
                 {
-                    GenerateEpub(settings);
+                    var files = GetFiles(settings);
+                    GenerateEpub(settings, files);
                     Console.WriteLine();
                     Console.WriteLine("Processing Complete. Press any key to continue");
                 }
@@ -63,7 +64,7 @@ namespace DocXFolderToEpub
             }
         }
 
-        public static void GenerateEpub(Settings options)
+        public static void GenerateEpub(Settings options, string[] files)
         {
             EpubWriter writer = new EpubWriter();
             writer.AddAuthor(options.Author);
@@ -89,7 +90,6 @@ namespace DocXFolderToEpub
             }
             writer.SetTitle(options.Title);
 
-            var files = CustomSort(Directory.GetFiles(options.Path, "*.docx", SearchOption.TopDirectoryOnly)).ToArray();
             foreach (string file in files)
             {
                 FileInfo info = new FileInfo(file);
@@ -211,6 +211,16 @@ namespace DocXFolderToEpub
             return returnValue;
         }
 
+        public static string[] GetFiles(Settings settings)
+        {
+            return GetFiles(settings.Path);
+        }
+
+        public static string[] GetFiles(string path)
+        {
+            return CustomSort(Directory.GetFiles(path, "*.docx", SearchOption.TopDirectoryOnly)).ToArray();
+        }
+
         public static Settings GetSettings(string settingsPath)
         {
             Settings settings = null;
@@ -237,6 +247,10 @@ namespace DocXFolderToEpub
 
         public static IEnumerable<string> CustomSort(IEnumerable<string> list)
         {
+            if (list.Count() == 0)
+            {
+                return list;
+            }
             int maxLen = list.Select(s => s.Length).Max();
 
             return list.Select(s => new

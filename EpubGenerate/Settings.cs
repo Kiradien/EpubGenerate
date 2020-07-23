@@ -17,7 +17,14 @@ namespace DocXFolderToEpub
 
         public bool WaitAtEnd { get; set; }
 
-        public string GetPathStr(string item) => $"{Path}/{item}";
+        public string GetPathStr(string item)
+        {
+            if (item.IndexOf(":") >= 0)
+            {
+                return item;
+            }
+            return $"{Path}/{item}";
+        }
         public string GetTitleForPath() => Regex.Replace(Title, @"/[^\w\s()-]/gi", "", RegexOptions.Compiled);
         public string GetTitlePath()
         {
