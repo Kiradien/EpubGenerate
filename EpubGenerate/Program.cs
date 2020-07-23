@@ -69,23 +69,26 @@ namespace DocXFolderToEpub
             EpubWriter writer = new EpubWriter();
             writer.AddAuthor(options.Author);
 
-            using (var ms = new MemoryStream())
+            if (!string.IsNullOrWhiteSpace(options.Cover))
             {
-                try
+                using (var ms = new MemoryStream())
                 {
-                    var img = Image.FromFile(options.GetPathStr(options.Cover), true);
-                    img.Save(ms, img.RawFormat);
-                    writer.SetCover(ms.ToArray(), ImageFormat.Png);
-                    writer.AddChapter("Cover", GeneratePage("<img src='cover.png' />"));
-                }
-                catch (FileNotFoundException e)
-                {
-                    Console.WriteLine($"Failed to find Cover Image at {options.GetPathStr(options.Cover)}. Defaulting to blank cover image. If you have a proper cover, please provide a relative path to it in the settings json file");
-                    Console.WriteLine();
-                    var img = new Bitmap(1, 1);
-                    img.SetPixel(0, 0, Color.White);
-                    img.Save(ms, SysImg.ImageFormat.Png);
-                    writer.SetCover(ms.ToArray(), ImageFormat.Png);
+                    try
+                    {
+                        var img = Image.FromFile(options.GetPathStr(options.Cover), true);
+                        img.Save(ms, img.RawFormat);
+                        writer.SetCover(ms.ToArray(), ImageFormat.Png);
+                        writer.AddChapter("Cover", GeneratePage("<img src='cover.png' />"));
+                    }
+                    catch (FileNotFoundException e)
+                    {
+                        Console.WriteLine($"Failed to find Cover Image at {options.GetPathStr(options.Cover)}. Defaulting to blank cover image. If you have a proper cover, please provide a relative path to it in the settings json file");
+                        Console.WriteLine();
+                        var img = new Bitmap(1, 1);
+                        img.SetPixel(0, 0, Color.White);
+                        img.Save(ms, SysImg.ImageFormat.Png);
+                        writer.SetCover(ms.ToArray(), ImageFormat.Png);
+                    }
                 }
             }
             writer.SetTitle(options.Title);

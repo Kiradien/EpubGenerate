@@ -29,15 +29,18 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.txtAuthor = new System.Windows.Forms.TextBox();
-            this.lblAuthor = new System.Windows.Forms.Label();
+            this.lblCover = new System.Windows.Forms.Label();
+            this.lblPath = new System.Windows.Forms.Label();
+            this.btnCover = new System.Windows.Forms.Button();
+            this.btnPath = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
             this.txtTitle = new System.Windows.Forms.TextBox();
-            this.btnPath = new System.Windows.Forms.Button();
-            this.btnCover = new System.Windows.Forms.Button();
-            this.lblPath = new System.Windows.Forms.Label();
-            this.lblCover = new System.Windows.Forms.Label();
+            this.lblAuthor = new System.Windows.Forms.Label();
+            this.txtAuthor = new System.Windows.Forms.TextBox();
             this.lstChapters = new System.Windows.Forms.CheckedListBox();
+            this.lstSavedSettings = new System.Windows.Forms.ListBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.btnGenerate = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -51,28 +54,48 @@
             this.groupBox1.Controls.Add(this.txtTitle);
             this.groupBox1.Controls.Add(this.lblAuthor);
             this.groupBox1.Controls.Add(this.txtAuthor);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Location = new System.Drawing.Point(12, 113);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(426, 131);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Configuration";
             // 
-            // txtAuthor
+            // lblCover
             // 
-            this.txtAuthor.Location = new System.Drawing.Point(270, 17);
-            this.txtAuthor.Name = "txtAuthor";
-            this.txtAuthor.Size = new System.Drawing.Size(140, 20);
-            this.txtAuthor.TabIndex = 2;
+            this.lblCover.AutoSize = true;
+            this.lblCover.Location = new System.Drawing.Point(6, 103);
+            this.lblCover.Name = "lblCover";
+            this.lblCover.Size = new System.Drawing.Size(0, 13);
+            this.lblCover.TabIndex = 7;
             // 
-            // lblAuthor
+            // lblPath
             // 
-            this.lblAuthor.AutoSize = true;
-            this.lblAuthor.Location = new System.Drawing.Point(223, 20);
-            this.lblAuthor.Name = "lblAuthor";
-            this.lblAuthor.Size = new System.Drawing.Size(41, 13);
-            this.lblAuthor.TabIndex = 1;
-            this.lblAuthor.Text = "Author:";
+            this.lblPath.AutoSize = true;
+            this.lblPath.Location = new System.Drawing.Point(6, 73);
+            this.lblPath.Name = "lblPath";
+            this.lblPath.Size = new System.Drawing.Size(0, 13);
+            this.lblPath.TabIndex = 6;
+            // 
+            // btnCover
+            // 
+            this.btnCover.Location = new System.Drawing.Point(270, 44);
+            this.btnCover.Name = "btnCover";
+            this.btnCover.Size = new System.Drawing.Size(140, 23);
+            this.btnCover.TabIndex = 5;
+            this.btnCover.Text = "Select your Cover Image";
+            this.btnCover.UseVisualStyleBackColor = true;
+            this.btnCover.Click += new System.EventHandler(this.btnCover_Click);
+            // 
+            // btnPath
+            // 
+            this.btnPath.Location = new System.Drawing.Point(53, 43);
+            this.btnPath.Name = "btnPath";
+            this.btnPath.Size = new System.Drawing.Size(140, 23);
+            this.btnPath.TabIndex = 4;
+            this.btnPath.Text = "Select your Folder";
+            this.btnPath.UseVisualStyleBackColor = true;
+            this.btnPath.Click += new System.EventHandler(this.btnPath_Click);
             // 
             // lblTitle
             // 
@@ -90,55 +113,66 @@
             this.txtTitle.Size = new System.Drawing.Size(140, 20);
             this.txtTitle.TabIndex = 1;
             // 
-            // btnPath
+            // lblAuthor
             // 
-            this.btnPath.Location = new System.Drawing.Point(53, 43);
-            this.btnPath.Name = "btnPath";
-            this.btnPath.Size = new System.Drawing.Size(140, 23);
-            this.btnPath.TabIndex = 4;
-            this.btnPath.Text = "Select your Folder";
-            this.btnPath.UseVisualStyleBackColor = true;
-            this.btnPath.Click += new System.EventHandler(this.btnPath_Click);
+            this.lblAuthor.AutoSize = true;
+            this.lblAuthor.Location = new System.Drawing.Point(223, 20);
+            this.lblAuthor.Name = "lblAuthor";
+            this.lblAuthor.Size = new System.Drawing.Size(41, 13);
+            this.lblAuthor.TabIndex = 1;
+            this.lblAuthor.Text = "Author:";
             // 
-            // btnCover
+            // txtAuthor
             // 
-            this.btnCover.Location = new System.Drawing.Point(270, 44);
-            this.btnCover.Name = "btnCover";
-            this.btnCover.Size = new System.Drawing.Size(140, 23);
-            this.btnCover.TabIndex = 5;
-            this.btnCover.Text = "Select your Cover Image";
-            this.btnCover.UseVisualStyleBackColor = true;
-            this.btnCover.Click += new System.EventHandler(this.btnCover_Click);
-            // 
-            // lblPath
-            // 
-            this.lblPath.AutoSize = true;
-            this.lblPath.Location = new System.Drawing.Point(6, 73);
-            this.lblPath.Name = "lblPath";
-            this.lblPath.Size = new System.Drawing.Size(0, 13);
-            this.lblPath.TabIndex = 6;
-            // 
-            // lblCover
-            // 
-            this.lblCover.AutoSize = true;
-            this.lblCover.Location = new System.Drawing.Point(6, 103);
-            this.lblCover.Name = "lblCover";
-            this.lblCover.Size = new System.Drawing.Size(0, 13);
-            this.lblCover.TabIndex = 7;
+            this.txtAuthor.Location = new System.Drawing.Point(270, 17);
+            this.txtAuthor.Name = "txtAuthor";
+            this.txtAuthor.Size = new System.Drawing.Size(140, 20);
+            this.txtAuthor.TabIndex = 2;
             // 
             // lstChapters
             // 
             this.lstChapters.FormattingEnabled = true;
-            this.lstChapters.Location = new System.Drawing.Point(12, 150);
+            this.lstChapters.Location = new System.Drawing.Point(12, 250);
             this.lstChapters.Name = "lstChapters";
-            this.lstChapters.Size = new System.Drawing.Size(310, 124);
+            this.lstChapters.Size = new System.Drawing.Size(286, 139);
             this.lstChapters.TabIndex = 1;
+            // 
+            // lstSavedSettings
+            // 
+            this.lstSavedSettings.FormattingEnabled = true;
+            this.lstSavedSettings.Location = new System.Drawing.Point(12, 28);
+            this.lstSavedSettings.Name = "lstSavedSettings";
+            this.lstSavedSettings.Size = new System.Drawing.Size(426, 69);
+            this.lstSavedSettings.TabIndex = 2;
+            this.lstSavedSettings.SelectedIndexChanged += new System.EventHandler(this.lstSavedSettings_SelectedIndexChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(79, 13);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Saved Settings";
+            // 
+            // btnGenerate
+            // 
+            this.btnGenerate.Location = new System.Drawing.Point(305, 251);
+            this.btnGenerate.Name = "btnGenerate";
+            this.btnGenerate.Size = new System.Drawing.Size(133, 23);
+            this.btnGenerate.TabIndex = 4;
+            this.btnGenerate.Text = "Generate";
+            this.btnGenerate.UseVisualStyleBackColor = true;
+            this.btnGenerate.Click += new System.EventHandler(this.btnGenerate_Click);
             // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(450, 535);
+            this.Controls.Add(this.btnGenerate);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lstSavedSettings);
             this.Controls.Add(this.lstChapters);
             this.Controls.Add(this.groupBox1);
             this.Name = "MainView";
@@ -146,6 +180,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -161,6 +196,9 @@
         private System.Windows.Forms.Label lblCover;
         private System.Windows.Forms.Label lblPath;
         private System.Windows.Forms.CheckedListBox lstChapters;
+        private System.Windows.Forms.ListBox lstSavedSettings;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btnGenerate;
     }
 }
 

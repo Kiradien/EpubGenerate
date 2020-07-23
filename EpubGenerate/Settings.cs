@@ -19,7 +19,7 @@ namespace DocXFolderToEpub
 
         public string GetPathStr(string item)
         {
-            if (item.IndexOf(":") >= 0)
+            if (item == null || item.IndexOf(":") >= 0)
             {
                 return item;
             }
