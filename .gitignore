@@ -2,4 +2,7 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/EpubGenerate/bin/Debug
+/EpubGenerate/bin
+/EpubGenerate/obj
+/.vs
+/packages
