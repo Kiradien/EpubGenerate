@@ -96,7 +96,16 @@ namespace DocXFolderToEpub
             foreach (string file in files)
             {
                 FileInfo info = new FileInfo(file);
-                writer.AddChapter(info.Name.Replace(".docx", ""), ConvertToHtml(info, writer));
+                string text = string.Empty;
+                try
+                {
+                    text = ConvertToHtml(info, writer);
+                }
+                catch(Exception ex)
+                {
+                    throw new Exception($"Unable to convert file: {file}", ex);
+                }
+                writer.AddChapter(info.Name.Replace(".docx", ""), text);
             }
 
             if (files.Length == 0)
