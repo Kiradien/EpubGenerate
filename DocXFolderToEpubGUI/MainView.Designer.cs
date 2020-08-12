@@ -41,11 +41,17 @@
             this.lstSavedSettings = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.btnGenerate = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.txtStatus = new System.Windows.Forms.TextBox();
+            this.cmbFileType = new System.Windows.Forms.ComboBox();
+            this.lblFileType = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.lblFileType);
+            this.groupBox1.Controls.Add(this.cmbFileType);
             this.groupBox1.Controls.Add(this.lblCover);
             this.groupBox1.Controls.Add(this.lblPath);
             this.groupBox1.Controls.Add(this.btnCover);
@@ -64,18 +70,20 @@
             // lblCover
             // 
             this.lblCover.AutoSize = true;
-            this.lblCover.Location = new System.Drawing.Point(6, 103);
+            this.lblCover.Location = new System.Drawing.Point(6, 82);
             this.lblCover.Name = "lblCover";
-            this.lblCover.Size = new System.Drawing.Size(0, 13);
+            this.lblCover.Size = new System.Drawing.Size(35, 13);
             this.lblCover.TabIndex = 7;
+            this.lblCover.Text = "Cover";
             // 
             // lblPath
             // 
             this.lblPath.AutoSize = true;
-            this.lblPath.Location = new System.Drawing.Point(6, 73);
+            this.lblPath.Location = new System.Drawing.Point(6, 67);
             this.lblPath.Name = "lblPath";
-            this.lblPath.Size = new System.Drawing.Size(0, 13);
+            this.lblPath.Size = new System.Drawing.Size(29, 13);
             this.lblPath.TabIndex = 6;
+            this.lblPath.Text = "Path";
             // 
             // btnCover
             // 
@@ -132,9 +140,10 @@
             // lstChapters
             // 
             this.lstChapters.FormattingEnabled = true;
+            this.lstChapters.HorizontalScrollbar = true;
             this.lstChapters.Location = new System.Drawing.Point(12, 250);
             this.lstChapters.Name = "lstChapters";
-            this.lstChapters.Size = new System.Drawing.Size(286, 139);
+            this.lstChapters.Size = new System.Drawing.Size(426, 139);
             this.lstChapters.TabIndex = 1;
             // 
             // lstSavedSettings
@@ -157,19 +166,54 @@
             // 
             // btnGenerate
             // 
-            this.btnGenerate.Location = new System.Drawing.Point(305, 251);
+            this.btnGenerate.Location = new System.Drawing.Point(12, 395);
             this.btnGenerate.Name = "btnGenerate";
-            this.btnGenerate.Size = new System.Drawing.Size(133, 23);
+            this.btnGenerate.Size = new System.Drawing.Size(426, 23);
             this.btnGenerate.TabIndex = 4;
             this.btnGenerate.Text = "Generate";
             this.btnGenerate.UseVisualStyleBackColor = true;
             this.btnGenerate.Click += new System.EventHandler(this.btnGenerate_Click);
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(12, 450);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(426, 23);
+            this.progressBar1.TabIndex = 5;
+            // 
+            // txtStatus
+            // 
+            this.txtStatus.Enabled = false;
+            this.txtStatus.Location = new System.Drawing.Point(12, 424);
+            this.txtStatus.Name = "txtStatus";
+            this.txtStatus.Size = new System.Drawing.Size(426, 20);
+            this.txtStatus.TabIndex = 6;
+            // 
+            // cmbFileType
+            // 
+            this.cmbFileType.FormattingEnabled = true;
+            this.cmbFileType.Location = new System.Drawing.Point(65, 98);
+            this.cmbFileType.Name = "cmbFileType";
+            this.cmbFileType.Size = new System.Drawing.Size(45, 21);
+            this.cmbFileType.TabIndex = 8;
+            this.cmbFileType.SelectedIndexChanged += new System.EventHandler(this.cmbFileType_SelectedIndexChanged);
+            // 
+            // lblFileType
+            // 
+            this.lblFileType.AutoSize = true;
+            this.lblFileType.Location = new System.Drawing.Point(6, 101);
+            this.lblFileType.Name = "lblFileType";
+            this.lblFileType.Size = new System.Drawing.Size(53, 13);
+            this.lblFileType.TabIndex = 9;
+            this.lblFileType.Text = "File Type:";
+            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(450, 535);
+            this.ClientSize = new System.Drawing.Size(450, 478);
+            this.Controls.Add(this.txtStatus);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.btnGenerate);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lstSavedSettings);
@@ -199,6 +243,10 @@
         private System.Windows.Forms.ListBox lstSavedSettings;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnGenerate;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.TextBox txtStatus;
+        private System.Windows.Forms.Label lblFileType;
+        private System.Windows.Forms.ComboBox cmbFileType;
     }
 }
 

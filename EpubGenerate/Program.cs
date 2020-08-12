@@ -1,17 +1,13 @@
-﻿using DocumentFormat.OpenXml.Packaging;
-using EpubSharp;
-using OpenXmlPowerTools;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using SysImg = System.Drawing.Imaging;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
+using Folder2Epub;
 
 namespace DocXFolderToEpub
 {
@@ -19,7 +15,8 @@ namespace DocXFolderToEpub
     {
         //Need to run "msbuild /t:ILMerge" in VS CMD Prompt for integrated executable.
         static void Main(string[] args)
-        {
+        {    
+
             Console.WriteLine("Batch DocX to epub converter thrown together by Kiradien.");
             Console.WriteLine("This application will convert all docx files in a specified folder into a single epub. Folder is specified through json settings.");
             Console.WriteLine();
@@ -37,20 +34,12 @@ namespace DocXFolderToEpub
                 {
                     settingsPath = args[0];
                 }
-                Settings settings = GetSettings(settingsPath);
+                DocX2Epub docX2Epub = new DocX2Epub(settingsPath);
+                docX2Epub.OnUpdate += (status) => Console.WriteLine(status);
 
+                docX2Epub.GenerateEpub();
 
-                if (settings != null)
-                {
-                    var files = GetFiles(settings);
-                    GenerateEpub(settings, files);
-                    Console.WriteLine();
-                    Console.WriteLine("Processing Complete. Press any key to continue");
-                }
-                else
-                {
-                    Console.WriteLine("Please press any key to continue");
-                }
+                Console.WriteLine("Please press any key to continue");
                 Console.ReadKey();
             }
             catch (Exception e)
@@ -64,214 +53,7 @@ namespace DocXFolderToEpub
             }
         }
 
-        public static void GenerateEpub(Settings options, string[] files)
-        {
-            EpubWriter writer = new EpubWriter();
-            writer.AddAuthor(options.Author);
-
-            if (!string.IsNullOrWhiteSpace(options.Cover))
-            {
-                using (var ms = new MemoryStream())
-                {
-                    try
-                    {
-                        var img = Image.FromFile(options.GetPathStr(options.Cover), true);
-                        img.Save(ms, img.RawFormat);
-                        writer.SetCover(ms.ToArray(), ImageFormat.Png);
-                        writer.AddChapter("Cover", GeneratePage("<img src='cover.png' />"));
-                    }
-                    catch (FileNotFoundException e)
-                    {
-                        Console.WriteLine($"Failed to find Cover Image at {options.GetPathStr(options.Cover)}. Defaulting to blank cover image. If you have a proper cover, please provide a relative path to it in the settings json file");
-                        Console.WriteLine();
-                        var img = new Bitmap(1, 1);
-                        img.SetPixel(0, 0, Color.White);
-                        img.Save(ms, SysImg.ImageFormat.Png);
-                        writer.SetCover(ms.ToArray(), ImageFormat.Png);
-                    }
-                }
-            }
-            writer.SetTitle(options.Title);
-
-            foreach (string file in files)
-            {
-                FileInfo info = new FileInfo(file);
-                string text = string.Empty;
-                try
-                {
-                    text = ConvertToHtml(info, writer);
-                }
-                catch(Exception ex)
-                {
-                    throw new Exception($"Unable to convert file: {file}", ex);
-                }
-                writer.AddChapter(info.Name.Replace(".docx", ""), text);
-            }
-
-            if (files.Length == 0)
-            {
-                string path = Path.GetDirectoryName(options.Path);
-                if (path == ".") path = Environment.CurrentDirectory;
-                Console.WriteLine($"No docx files found in {path}");
-            }
-
-            writer.Write(options.GetTitlePath());
-        }
-
-        public static string ConvertToHtml(FileInfo file, EpubWriter writer)
-        {
-            Console.WriteLine($"Processing File: {file.Name}");
-            byte[] byteArray = File.ReadAllBytes(file.FullName);
-            using (MemoryStream memoryStream = new MemoryStream())
-            {
-                memoryStream.Write(byteArray, 0, byteArray.Length);
-                using (WordprocessingDocument wDoc = WordprocessingDocument.Open(memoryStream, true))
-                {
-                    var pageTitle = file.FullName;
-                    var part = wDoc.CoreFilePropertiesPart;
-                    if (part != null)
-                    {
-                        pageTitle = (string)part.GetXDocument().Descendants(DC.title).FirstOrDefault() ?? file.FullName;
-                    }
-
-                    HtmlConverterSettings settings = new HtmlConverterSettings()
-                    {
-                        AdditionalCss = "body { margin: 1cm auto; max-width: 20cm; padding: 0; }",
-                        PageTitle = pageTitle,
-                        FabricateCssClasses = true,
-                        CssClassPrefix = "pt-",
-                        RestrictToSupportedLanguages = false,
-                        RestrictToSupportedNumberingFormats = false,
-                        ImageHandler = imageInfo =>
-                        {
-                            string extension = imageInfo.ContentType.Split('/')[1].ToLower();
-                            SysImg.ImageFormat imageFormat = null;
-                            if (extension == "png")
-                                imageFormat = SysImg.ImageFormat.Png;
-                            else if (extension == "gif")
-                                imageFormat = SysImg.ImageFormat.Gif;
-                            else if (extension == "bmp")
-                                imageFormat = SysImg.ImageFormat.Bmp;
-                            else if (extension == "jpeg")
-                                imageFormat = SysImg.ImageFormat.Jpeg;
-                            else if (extension == "tiff")
-                            {
-                                // Convert tiff to gif.
-                                extension = "gif";
-                                imageFormat = SysImg.ImageFormat.Gif;
-                            }
-                            else if (extension == "x-wmf")
-                            {
-                                extension = "wmf";
-                                imageFormat = SysImg.ImageFormat.Wmf;
-                            }
-
-                            // If the image format isn't one that we expect, ignore it,
-                            // and don't return markup for the link.
-                            if (imageFormat == null)
-                                return null;
-
-                            string fileName = $"{Guid.NewGuid()}.{extension}";
-                            string filePath = $"images/{fileName}";
-
-                            using (var ms = new MemoryStream())
-                            {
-                                imageInfo.Bitmap.Save(ms, SysImg.ImageFormat.Png);
-                                writer.AddFile(filePath, ms.ToArray(), EpubSharp.Format.EpubContentType.ImagePng);
-                            }
-
-                            XElement ximg = new XElement(Xhtml.img,
-                                new XAttribute(NoNamespace.src, filePath),
-                                imageInfo.ImgStyleAttribute,
-                                imageInfo.AltText != null ?
-                                    new XAttribute(NoNamespace.alt, imageInfo.AltText) : null);
-                            return ximg;
-                        }
-                    };
-                    XElement htmlElement = HtmlConverter.ConvertToHtml(wDoc, settings);
-
-                    var html = new XDocument(
-                        new XDocumentType("html", null, null, null),
-                        htmlElement);
 
 
-                    var htmlString = html.ToString(SaveOptions.DisableFormatting);
-                    return htmlString;
-                }
-            }
-        }
-
-        public static string GeneratePage(string body)
-        {
-            string returnValue =
-                @"<?xml version=""1.0"" encoding=""UTF-8""?>
-<!DOCTYPE html>
-<html xmlns=""http://www.w3.org/1999/xhtml"" xmlns:epub=""http://www.idpf.org/2007/ops"" lang=""en"">
-  <head>
-  <meta charset=""UTF-8"" />
-  <title></title>
-  <link rel=""stylesheet"" type=""text/css"" href=""style.css"" />
-  </head>
-	<body>
-";
-            returnValue += body;
-
-            returnValue += @"
-	</body>
-</html>
-";
-            return returnValue;
-        }
-
-        public static string[] GetFiles(Settings settings)
-        {
-            return GetFiles(settings.Path);
-        }
-
-        public static string[] GetFiles(string path)
-        {
-            return CustomSort(Directory.GetFiles(path, "*.docx", SearchOption.TopDirectoryOnly)).ToArray();
-        }
-
-        public static Settings GetSettings(string settingsPath)
-        {
-            Settings settings = null;
-
-            if (!File.Exists(settingsPath))
-            {
-                settings = new Settings()
-                {
-                    Author = "Author name goes here",
-                    Title = Path.GetFileName(Environment.CurrentDirectory),
-                    Path = "./",
-                    Cover = "cover.jpg",
-                    WaitAtEnd = true
-                };
-
-                Console.WriteLine("No settings detected. Creating default settings file at location.");
-                File.WriteAllText(settingsPath, JsonConvert.SerializeObject(settings, Formatting.Indented));
-                Console.WriteLine($"Settings file created. {settingsPath} Please edit the file and run again to generate.");
-                return null;
-            }
-            settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(settingsPath));
-            return settings;
-        }
-
-        public static IEnumerable<string> CustomSort(IEnumerable<string> list)
-        {
-            if (list.Count() == 0)
-            {
-                return list;
-            }
-            int maxLen = list.Select(s => s.Length).Max();
-
-            return list.Select(s => new
-            {
-                OrgStr = s,
-                SortStr = Regex.Replace(s, @"(\d+)|(\D+)", m => m.Value.PadLeft(maxLen, char.IsDigit(m.Value[0]) ? ' ' : '\xffff'), RegexOptions.Compiled)
-            })
-            .OrderBy(x => x.SortStr)
-            .Select(x => x.OrgStr);
-        }
     }
 }

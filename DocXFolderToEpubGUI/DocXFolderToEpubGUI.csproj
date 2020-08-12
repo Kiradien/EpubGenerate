@@ -112,12 +112,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EpubGenerate\DocXFolderToEpub.csproj">
-      <Project>{a8c614b4-395b-4c75-afa9-b09a30d3a4e4}</Project>
-      <Name>DocXFolderToEpub</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
@@ -128,6 +122,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Folder2Epub\Folder2Epub.csproj">
+      <Project>{95254bea-1e49-44f0-a21f-2bb466a1f215}</Project>
+      <Name>Folder2Epub</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

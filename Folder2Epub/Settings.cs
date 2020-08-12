@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 
-namespace DocXFolderToEpub
+namespace Folder2Epub
 {
     public class Settings
     {

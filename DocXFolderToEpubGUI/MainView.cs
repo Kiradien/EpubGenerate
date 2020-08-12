@@ -1,4 +1,4 @@
-﻿using DocXFolderToEpub;
+﻿using Folder2Epub;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -15,10 +15,13 @@ namespace DocXFolderToEpubGUI
 {
     public partial class MainView : Form
     {
+        public BaseFolder2Epub folder2Epub;
+
         public string DocPath { get; set; }
         public string DocCover { get; set; }
 
         public List<Settings> SettingsList { get; set; }
+        public static string[] DocumentTypes = { "docx", "txt" };
 
         public MainView()
         {
@@ -27,6 +30,11 @@ namespace DocXFolderToEpubGUI
             SettingsList = GetAllSettings();
             lstSavedSettings.Items.AddRange(SettingsList.ToArray());
             lstSavedSettings.DisplayMember = "Title";
+
+            lblCover.Text = string.Empty;
+            lblPath.Text = string.Empty;
+            cmbFileType.Items.AddRange(DocumentTypes);
+            cmbFileType.SelectedIndex = 0;
         }
 
         public List<Settings> GetAllSettings()
@@ -42,6 +50,20 @@ namespace DocXFolderToEpubGUI
             }
             return JsonConvert.DeserializeObject<Settings[]>(File.ReadAllText(settingsPath)).ToList();
         }
+
+        public Settings GetSettings()
+        {
+            Settings newSettings = new Settings()
+            {
+                Author = txtAuthor.Text,
+                Title = txtTitle.Text,
+                Path = DocPath,
+                Cover = DocCover,
+                WaitAtEnd = false
+            };
+            return newSettings;
+        }
+
         public void SaveAllSettings()
         {
             string settingsPath = $"{Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly().Location)}.json";
@@ -63,8 +85,20 @@ namespace DocXFolderToEpubGUI
 
         private void UpdateFileList()
         {
+            switch (this.cmbFileType.SelectedItem.ToString())
+            {
+                case "docx":
+                    this.folder2Epub = new DocX2Epub(GetSettings());
+                    break;
+                case "txt":
+                    this.folder2Epub = new Txt2Epub(GetSettings());
+                    break;
+                default:
+                    MessageBox.Show("The selected type has not been configured.");
+                    break;
+            }
             lstChapters.Items.Clear();
-            lstChapters.Items.AddRange(DocXFolderToEpub.Program.GetFiles(DocPath));
+            lstChapters.Items.AddRange(folder2Epub.GetFiles());
             for (int i = 0; i < lstChapters.Items.Count; i++)
                 lstChapters.SetItemChecked(i, true);
         }
@@ -85,14 +119,7 @@ namespace DocXFolderToEpubGUI
         private void btnGenerate_Click(object sender, EventArgs e)
         {
             btnGenerate.Enabled = false;
-            Settings newSettings = new Settings()
-            {
-                Author = txtAuthor.Text,
-                Title = txtTitle.Text,
-                Path = DocPath,
-                Cover = DocCover,
-                WaitAtEnd = false
-            };
+            var newSettings = GetSettings();
 
             if (DocPath == null || DocPath.Length < 1)
             {
@@ -124,7 +151,17 @@ namespace DocXFolderToEpubGUI
             lstSavedSettings.Items.AddRange(SettingsList.ToArray());
             SaveAllSettings();
 
-            DocXFolderToEpub.Program.GenerateEpub(newSettings, lstChapters.CheckedItems.OfType<string>().ToArray());
+            folder2Epub.OnProgress += (current, total) => {
+                progressBar1.Minimum = 0;
+                progressBar1.Maximum = total;
+                progressBar1.Value = current;
+            };
+            folder2Epub.OnUpdate += (text) =>
+            {
+                txtStatus.Text = text;
+            };
+            folder2Epub.GenerateEpub(lstChapters.CheckedItems.OfType<string>().ToArray());
+
             MessageBox.Show($"Generation of epub complete\n{newSettings.GetTitlePath()}");
 
             btnGenerate.Enabled = true;
@@ -143,6 +180,12 @@ namespace DocXFolderToEpubGUI
                 lblCover.Text = DocCover;
                 UpdateFileList();
             }
+        }
+
+        private void cmbFileType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(GetSettings().Path))
+                UpdateFileList();
         }
     }
 }
