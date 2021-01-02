@@ -21,7 +21,7 @@ namespace DocXFolderToEpubGUI
         public string DocCover { get; set; }
 
         public List<Settings> SettingsList { get; set; }
-        public static string[] DocumentTypes = { "docx", "txt" };
+        public static string[] DocumentTypes = { "docx", "txt", "html" };
 
         public MainView()
         {
@@ -93,6 +93,9 @@ namespace DocXFolderToEpubGUI
                 case "txt":
                     this.folder2Epub = new Txt2Epub(GetSettings());
                     break;
+                case "html":
+                    this.folder2Epub = new Html2Epub(GetSettings());
+                    break;
                 default:
                     MessageBox.Show("The selected type has not been configured.");
                     break;
@@ -118,6 +121,7 @@ namespace DocXFolderToEpubGUI
 
         private void btnGenerate_Click(object sender, EventArgs e)
         {
+            UpdateFileList();
             btnGenerate.Enabled = false;
             var newSettings = GetSettings();
 

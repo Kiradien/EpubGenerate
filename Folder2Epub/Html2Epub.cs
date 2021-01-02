@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace Folder2Epub
 {
-    public class Txt2Epub : BaseFolder2Epub
+    public class Html2Epub : BaseFolder2Epub
     {
-        public Txt2Epub(string settings) : base(settings, "txt")
+        public Html2Epub(string settings) : base(settings, "html")
         {
 
         }
-        public Txt2Epub(Settings settings) : base(settings, "txt")
+        public Html2Epub(Settings settings) : base(settings, "html")
         {
 
         }
