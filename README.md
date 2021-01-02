@@ -7,6 +7,7 @@ By Default, a json file will be generated to generate based off current director
 Different json files can be passed in as the first Command Line Argument.
 
 
+Old notes:
 An old precompiled portable executable can be downloaded in http://kiradien.com/DocXFoldertoEpub.zip - exe contains all necessary dlls.
 
-Portable executable can be compiled after building for release and running "msbuild /t:ILMerge";
+Portable executable can be compiled after building for release and running "msbuild /t:ILMerge"; - no longer valid.
