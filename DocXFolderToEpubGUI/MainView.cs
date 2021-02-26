@@ -19,20 +19,22 @@ namespace DocXFolderToEpubGUI
 
         public string DocPath { get; set; }
         public string DocCover { get; set; }
+        private int? SelectedSetting = null;
 
         public List<Settings> SettingsList { get; set; }
-        public static string[] DocumentTypes = { "docx", "txt", "html" };
+        public static string[] DocumentTypes = { "docx", "txt", "html", "xhtml" };
 
         public MainView()
         {
             InitializeComponent();
+            btnDeselect.Enabled = false;
             btnCover.Enabled = false;
             SettingsList = GetAllSettings();
             lstSavedSettings.Items.AddRange(SettingsList.ToArray());
             lstSavedSettings.DisplayMember = "Title";
 
             lblCover.Text = string.Empty;
-            lblPath.Text = string.Empty;
+            txtPath.Text = string.Empty;
             cmbFileType.Items.AddRange(DocumentTypes);
             cmbFileType.SelectedIndex = 0;
         }
@@ -73,10 +75,11 @@ namespace DocXFolderToEpubGUI
         private void btnPath_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
+            folderBrowserDialog1.SelectedPath = txtPath.Text;
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
                 DocPath = folderBrowserDialog1.SelectedPath;
-                lblPath.Text = DocPath;
+                txtPath.Text = DocPath;
                 btnCover.Enabled = true;
 
                 UpdateFileList();
@@ -95,6 +98,9 @@ namespace DocXFolderToEpubGUI
                     break;
                 case "html":
                     this.folder2Epub = new Html2Epub(GetSettings());
+                    break;
+                case "xhtml":
+                    this.folder2Epub = new Html2Epub(GetSettings(), "xhtml");
                     break;
                 default:
                     MessageBox.Show("The selected type has not been configured.");
@@ -121,7 +127,6 @@ namespace DocXFolderToEpubGUI
 
         private void btnGenerate_Click(object sender, EventArgs e)
         {
-            UpdateFileList();
             btnGenerate.Enabled = false;
             var newSettings = GetSettings();
 
@@ -149,7 +154,13 @@ namespace DocXFolderToEpubGUI
                 return;
             }
 
+            if (this.SelectedSetting.HasValue)
+            {
+                SettingsList.RemoveAt(this.SelectedSetting.Value);
+            }
+
             SettingsList.RemoveAll(item => item.Title == newSettings.Title);
+
             SettingsList.Add(newSettings);
             lstSavedSettings.Items.Clear();
             lstSavedSettings.Items.AddRange(SettingsList.ToArray());
@@ -164,7 +175,8 @@ namespace DocXFolderToEpubGUI
             {
                 txtStatus.Text = text;
             };
-            folder2Epub.GenerateEpub(lstChapters.CheckedItems.OfType<string>().ToArray());
+
+            folder2Epub.GenerateEpub(newSettings, lstChapters.CheckedItems.OfType<string>().ToArray());
 
             MessageBox.Show($"Generation of epub complete\n{newSettings.GetTitlePath()}");
 
@@ -179,10 +191,13 @@ namespace DocXFolderToEpubGUI
                 txtAuthor.Text = selectedItem.Author;
                 txtTitle.Text = selectedItem.Title;
                 DocPath = selectedItem.Path;
-                lblPath.Text = DocPath;
+                txtPath.Text = DocPath;
                 DocCover = selectedItem.Cover;
                 lblCover.Text = DocCover;
                 UpdateFileList();
+                this.SelectedSetting = lstSavedSettings.Items.IndexOf(selectedItem);
+
+                btnDeselect.Enabled = true;
             }
         }
 
@@ -190,6 +205,16 @@ namespace DocXFolderToEpubGUI
         {
             if (!string.IsNullOrWhiteSpace(GetSettings().Path))
                 UpdateFileList();
+        }
+
+        private void lstChapters_SelectedIndexChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void btnDeselect_Click(object sender, EventArgs e)
+        {
+            this.SelectedSetting = null;
+            btnDeselect.Enabled = false;
         }
     }
 }

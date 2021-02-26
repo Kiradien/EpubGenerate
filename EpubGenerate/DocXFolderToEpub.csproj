@@ -99,7 +99,7 @@
     <Error Condition="!Exists('..\packages\ILMerge.3.0.41\build\ILMerge.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILMerge.3.0.41\build\ILMerge.props'))" />
   </Target>
   <ItemGroup>
-    <PackageReference Include="ILMerge" Version="3.0.29" />
+    <PackageReference Include="ILMerge" Version="3.0.41" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Folder2Epub\Folder2Epub.csproj">

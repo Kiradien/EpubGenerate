@@ -19,7 +19,7 @@ namespace Folder2Epub
 
         public string GetPathStr(string item)
         {
-            if (item == null || item.IndexOf(":") >= 0)
+            if (item == null || item.IndexOf(":") >= 0 || item.IndexOf("\\\\") == 0)
             {
                 return item;
             }

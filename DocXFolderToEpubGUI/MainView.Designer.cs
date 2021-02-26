@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lblFileType = new System.Windows.Forms.Label();
+            this.cmbFileType = new System.Windows.Forms.ComboBox();
             this.lblCover = new System.Windows.Forms.Label();
             this.lblPath = new System.Windows.Forms.Label();
             this.btnCover = new System.Windows.Forms.Button();
@@ -43,13 +45,14 @@
             this.btnGenerate = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.txtStatus = new System.Windows.Forms.TextBox();
-            this.cmbFileType = new System.Windows.Forms.ComboBox();
-            this.lblFileType = new System.Windows.Forms.Label();
+            this.txtPath = new System.Windows.Forms.TextBox();
+            this.btnDeselect = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtPath);
             this.groupBox1.Controls.Add(this.lblFileType);
             this.groupBox1.Controls.Add(this.cmbFileType);
             this.groupBox1.Controls.Add(this.lblCover);
@@ -67,10 +70,28 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Configuration";
             // 
+            // lblFileType
+            // 
+            this.lblFileType.AutoSize = true;
+            this.lblFileType.Location = new System.Drawing.Point(6, 110);
+            this.lblFileType.Name = "lblFileType";
+            this.lblFileType.Size = new System.Drawing.Size(53, 13);
+            this.lblFileType.TabIndex = 9;
+            this.lblFileType.Text = "File Type:";
+            // 
+            // cmbFileType
+            // 
+            this.cmbFileType.FormattingEnabled = true;
+            this.cmbFileType.Location = new System.Drawing.Point(65, 107);
+            this.cmbFileType.Name = "cmbFileType";
+            this.cmbFileType.Size = new System.Drawing.Size(45, 21);
+            this.cmbFileType.TabIndex = 8;
+            this.cmbFileType.SelectedIndexChanged += new System.EventHandler(this.cmbFileType_SelectedIndexChanged);
+            // 
             // lblCover
             // 
             this.lblCover.AutoSize = true;
-            this.lblCover.Location = new System.Drawing.Point(6, 82);
+            this.lblCover.Location = new System.Drawing.Point(6, 91);
             this.lblCover.Name = "lblCover";
             this.lblCover.Size = new System.Drawing.Size(35, 13);
             this.lblCover.TabIndex = 7;
@@ -79,7 +100,7 @@
             // lblPath
             // 
             this.lblPath.AutoSize = true;
-            this.lblPath.Location = new System.Drawing.Point(6, 67);
+            this.lblPath.Location = new System.Drawing.Point(6, 70);
             this.lblPath.Name = "lblPath";
             this.lblPath.Size = new System.Drawing.Size(29, 13);
             this.lblPath.TabIndex = 6;
@@ -139,12 +160,14 @@
             // 
             // lstChapters
             // 
+            this.lstChapters.CheckOnClick = true;
             this.lstChapters.FormattingEnabled = true;
             this.lstChapters.HorizontalScrollbar = true;
             this.lstChapters.Location = new System.Drawing.Point(12, 250);
             this.lstChapters.Name = "lstChapters";
             this.lstChapters.Size = new System.Drawing.Size(426, 139);
             this.lstChapters.TabIndex = 1;
+            this.lstChapters.SelectedIndexChanged += new System.EventHandler(this.lstChapters_SelectedIndexChanged);
             // 
             // lstSavedSettings
             // 
@@ -189,29 +212,29 @@
             this.txtStatus.Size = new System.Drawing.Size(426, 20);
             this.txtStatus.TabIndex = 6;
             // 
-            // cmbFileType
+            // txtPath
             // 
-            this.cmbFileType.FormattingEnabled = true;
-            this.cmbFileType.Location = new System.Drawing.Point(65, 98);
-            this.cmbFileType.Name = "cmbFileType";
-            this.cmbFileType.Size = new System.Drawing.Size(45, 21);
-            this.cmbFileType.TabIndex = 8;
-            this.cmbFileType.SelectedIndexChanged += new System.EventHandler(this.cmbFileType_SelectedIndexChanged);
+            this.txtPath.Location = new System.Drawing.Point(41, 67);
+            this.txtPath.Name = "txtPath";
+            this.txtPath.Size = new System.Drawing.Size(369, 20);
+            this.txtPath.TabIndex = 10;
             // 
-            // lblFileType
+            // btnDeselect
             // 
-            this.lblFileType.AutoSize = true;
-            this.lblFileType.Location = new System.Drawing.Point(6, 101);
-            this.lblFileType.Name = "lblFileType";
-            this.lblFileType.Size = new System.Drawing.Size(53, 13);
-            this.lblFileType.TabIndex = 9;
-            this.lblFileType.Text = "File Type:";
+            this.btnDeselect.Location = new System.Drawing.Point(348, 9);
+            this.btnDeselect.Name = "btnDeselect";
+            this.btnDeselect.Size = new System.Drawing.Size(89, 19);
+            this.btnDeselect.TabIndex = 7;
+            this.btnDeselect.Text = "Deselect";
+            this.btnDeselect.UseVisualStyleBackColor = true;
+            this.btnDeselect.Click += new System.EventHandler(this.btnDeselect_Click);
             // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(450, 478);
+            this.Controls.Add(this.btnDeselect);
             this.Controls.Add(this.txtStatus);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.btnGenerate);
@@ -247,6 +270,8 @@
         private System.Windows.Forms.TextBox txtStatus;
         private System.Windows.Forms.Label lblFileType;
         private System.Windows.Forms.ComboBox cmbFileType;
+        private System.Windows.Forms.TextBox txtPath;
+        private System.Windows.Forms.Button btnDeselect;
     }
 }
 

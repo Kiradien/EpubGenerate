@@ -75,7 +75,7 @@ namespace Folder2Epub
                     Author = "Author name goes here",
                     Title = Path.GetFileName(Environment.CurrentDirectory),
                     Path = "./",
-                    Cover = "cover.jpg",
+                    Cover = "cover.png",
                     WaitAtEnd = true
                 };
 
@@ -145,7 +145,7 @@ namespace Folder2Epub
                 {
                     throw new Exception($"Unable to convert file: {file}", ex);
                 }
-                writer.AddChapter(info.Name.Replace($".{FileType}", ""), text);
+                writer.AddChapter(GetChapterName(info, text), text);
                 OnProgress(i * 2 + 1, maxLength);
             }
 
@@ -159,6 +159,12 @@ namespace Folder2Epub
             writer.Write(options.GetTitlePath());
             OnProgress(maxLength, maxLength);
         }
+
+        public virtual string GetChapterName(FileInfo info, string text)
+        {
+            return info.Name.Replace($".{FileType}", "");
+        }
+
         public string GeneratePageTemplate(string body)
         {
             string returnValue =
